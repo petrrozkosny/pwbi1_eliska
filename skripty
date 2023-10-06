@@ -55,3 +55,65 @@ SUMX(
 data[srazky])
 
 _______________________________
+
+17 suma srazek dany rok = 
+
+IF(
+    SELECTEDVALUE(typ_obdobi[obdobi]) = "prubezne",
+    SUM(data[srazky])
+    ,
+    -- suma srazek kumulativne
+
+--krok3: Funkce SUMX() agreguje sloupec tabulky vracene funkci FILTER()
+SUMX(
+    --krok2: Funce FILTER() nastavuje filtry nad sloupci tabulky vracene funkci ALL()
+    FILTER(
+        --krok1: Kopie tabulky data zbavena vsech filtru
+        ALL(data),
+    -- hodnoty podminek (tj. to za operatorem) pocitame z originalni tabulky data filtrovane vizualem
+    data[lokalita] = SELECTEDVALUE(data[lokalita])
+    && data[rok] = SELECTEDVALUE(data[rok])
+    && data[mesic] <= SELECTEDVALUE(data[mesic])
+    )
+,data[srazky]))
+
+_______________________________________________
+
+18 suma srazek predchozi rok = 
+IF(
+    SELECTEDVALUE(typ_obdobi[obdobi]) = "prubezne",
+    -- suma srazek v dane lokalite, danem mesici a predchozim roce
+SUMX(
+    FILTER(
+        ALL(data),
+    data[lokalita] = SELECTEDVALUE(data[lokalita])
+    && data[mesic] = SELECTEDVALUE(data[mesic])
+    && data[rok] = SELECTEDVALUE(data[rok]) - 1),
+data[srazky])
+,
+SUMX(
+    FILTER(
+        ALL(data),
+    data[lokalita] = SELECTEDVALUE(data[lokalita])
+    && data[mesic] <= SELECTEDVALUE(data[mesic])
+    && data[rok] = SELECTEDVALUE(data[rok]) - 1),
+data[srazky]))
+________________________________
+
+19 nazev grafu = 
+"Vývoj srážek v lokalitě "&SELECTEDVALUE(data[lokalita])&", rok "&SELECTEDVALUE(data[rok])
+
+_____________________________________
+
+20 pf srazky mezirocne = 
+
+IF(
+    SUM(data[srazky]) <
+    SUMX(
+        FILTER(
+            ALL(data),
+        data[lokalita] = SELECTEDVALUE(data[lokalita])
+        && data[mesic] = SELECTEDVALUE(data[mesic])
+        && data[rok] = SELECTEDVALUE(data[rok]) - 1),
+    data[srazky]),
+"gold")
