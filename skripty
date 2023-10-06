@@ -117,3 +117,22 @@ IF(
         && data[rok] = SELECTEDVALUE(data[rok]) - 1),
     data[srazky]),
 "gold")
+____________________________________
+
+21 pf max teplota = 
+SWITCH(TRUE(),
+    -- maximalni teplota v danem roce, mesici, lokalite
+    MAX(data[maximalni_teplota]) = 
+
+    -- maximalni teplota v dane lokalite, mesici, napric roky
+    MAXX(
+        FILTER(
+            ALL(data),
+        data[lokalita] = SELECTEDVALUE(data[lokalita])
+        && data[mesic] = SELECTEDVALUE(data[mesic])),
+    data[maximalni_teplota]),"GOLD",
+    MAX(data[maximalni_teplota]) = 
+
+    MINX(
+        ALL(data[rok]),
+        CALCULATE(MAX(data[maximalni_teplota]))),"CYAN")
