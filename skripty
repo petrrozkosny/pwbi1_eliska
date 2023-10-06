@@ -136,3 +136,15 @@ SWITCH(TRUE(),
     MINX(
         ALL(data[rok]),
         CALCULATE(MAX(data[maximalni_teplota]))),"CYAN")
+____________________________________________
+
+02 maximalni srazky = 
+IF(
+-- respektuji lokality, rusim mesic a rok
+MAXX(
+    FILTER(
+        ALL(data),
+        data[lokalita] IN VALUES(data[lokalita])),
+data[srazky])
+=
+MAX(data[srazky]),"GOLD")
